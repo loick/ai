@@ -2,7 +2,7 @@
 
 WAT is the architecture that makes the [Manifesto](./MANIFESTO.md) buildable. It separates concerns so that **probabilistic AI handles reasoning while deterministic code handles execution**, which is what makes an AI system reliable instead of impressively-wrong.
 
-> **Source & attribution:** the WAT method (Workflows / Agents / Tools) comes from Nate Herk and the [AI Automation Society](https://www.skool.com/ai-automation-society/about) community. It's a practitioner's framework, not a formal standard.
+> **Source & attribution:** the core Workflows / Agents / Tools split comes from Nate Herk and the [AI Automation Society](https://www.skool.com/ai-automation-society/about) community — a practitioner's framework, not a formal standard. This write-up is *inspired by* it but adapts and extends it: the way verification is distributed across the three layers, and the agent-modality axis below, are our own additions, not part of the original.
 
 ---
 
@@ -19,6 +19,14 @@ Plain-language SOPs, written the way you'd brief a teammate. Each defines the ob
 
 **Agents: the decision-maker (orchestrate + verify).**
 The intelligent coordinator. It reads the relevant workflow, runs the tools in the right order, handles failures, asks when genuinely unsure, and checks its own output against the workflow's acceptance criteria before handing anything off. It connects intent to execution without trying to do everything itself. When something needs pulling from a system, the agent doesn't improvise it; it reaches for the tool built for that.
+
+An agent runs in one of three *modalities*, and which one matters as much as what the agent does:
+
+- **Interactive (synchronous):** a human is present and in the loop; it's the foreground, one-active-task mode.
+- **Asynchronous (background):** fires and reports — runs unattended, surfacing on completion or when it's blocked.
+- **Scheduled / event-triggered:** invoked by a clock or an event rather than a person; residual judgment only, or none at all. This is the end state of a graduated loop.
+
+The direction of travel is *down* that list: as a job becomes understood and repeatable, you move it from interactive toward scheduled — taking human presence and model reasoning out of each run. That's what "graduating the loop" below actually does.
 
 **Tools: the execution (do the work, deterministically).**
 Scripts that do the actual work: API calls, transformations, file and data operations. Consistent, testable, fast. Verification tools live here too (a link-checker, a schema validator, a test): anything whose output is a clean pass/fail is a tool, not a judgment call.

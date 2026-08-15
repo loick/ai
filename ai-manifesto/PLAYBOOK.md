@@ -153,6 +153,7 @@ Enforce it mechanically, not by memory. The dangerous PR is the one whose author
 
 ## Loop graduation (WAT)
 
+- **Graduation is a shift down the agent-modality ladder,** not just "build a tool": interactive agent (human present) → async/background agent (fires and reports) → scheduled/event-triggered run (no per-run agent). Each rung down removes human presence *and* model reasoning from the hot path. To graduate a loop is to move it one rung once it's repeatable and understood.
 - Repeatable loop → have an agent build the deterministic **tool** / **scheduled job**, then remove the agent from the hot path.
 - Push what you can to deterministic tools; keep the agent only for residual judgment. Mixed agent+tool is fine; aim for *less* model in the loop, not zero.
 - Graduated jobs must stay **observable** and be able to **escalate back to an agent/human** when their assumptions break. A silent broken cron is worse than no automation.
