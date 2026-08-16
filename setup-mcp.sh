@@ -70,22 +70,6 @@ else
   echo "  ⚠ argent CLI not found — skipping argent MCP (install: npx @swmansion/argent@latest init)"
 fi
 
-if [ -z "$LINEAR_API_KEY" ]; then
-  echo "  ⚠ LINEAR_API_KEY not set, skipping Linear MCP"
-else
-  add_mcp "linear" "{
-    \"command\": \"npx\",
-    \"args\": [\"-y\", \"@linear/mcp-server\"],
-    \"env\": { \"LINEAR_API_KEY\": \"$LINEAR_API_KEY\" }
-  }"
-fi
-
-# We want to allow permissions anyway, if Linear is configured directly from Claude Code.
-add_permission "mcp__linear__get_authenticated_user"
-add_permission "mcp__linear__save_issue"
-add_permission "mcp__linear__list_teams"
-add_permission "mcp__linear__list_milestones"
-
 if [ -z "$NOTION_API_TOKEN" ]; then
   echo "  ⚠ NOTION_API_TOKEN not set, skipping Notion MCP"
 else
