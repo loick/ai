@@ -58,6 +58,18 @@ add_mcp "chrome-devtools" '{
   "args": ["-y", "chrome-devtools-mcp@latest"]
 }'
 
+# Device-control MCP for debugging React Native / Expo apps on iOS
+# simulators, Android emulators, and Chromium. Needs the argent CLI on PATH.
+if command -v argent > /dev/null 2>&1; then
+  add_mcp "argent" '{
+    "type": "stdio",
+    "command": "argent",
+    "args": ["mcp"]
+  }'
+else
+  echo "  ⚠ argent CLI not found — skipping argent MCP (install: npx @swmansion/argent@latest init)"
+fi
+
 if [ -z "$LINEAR_API_KEY" ]; then
   echo "  ⚠ LINEAR_API_KEY not set, skipping Linear MCP"
 else

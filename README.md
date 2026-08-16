@@ -30,6 +30,8 @@ brew install jq node
 brew install --cask claude-code
 ```
 
+Optional, for React Native / Expo debugging on simulators and emulators: `npx @swmansion/argent@latest init` installs the `argent` CLI, which `setup-mcp.sh` wires up as an MCP server (skipped automatically if the CLI isn't present).
+
 ### Install
 
 ```sh
