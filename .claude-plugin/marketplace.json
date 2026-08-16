@@ -10,8 +10,8 @@
     {
       "name": "ai-config",
       "source": ".",
-      "description": "Layered code reviewers (XP, Paul, security), multi-lens qa-swarm review, review-triage, comment-audit, daily-standup, and a zero-trust output style.",
-      "version": "0.1.0",
+      "description": "Layered code reviewers (XP, Paul, security), multi-lens qa-swarm review, review-triage, comment-audit, a WAT automation planner, daily-standup, and a zero-trust output style.",
+      "version": "0.2.0",
       "category": "workflow",
       "tags": ["code-review", "skills", "workflow"]
     }
