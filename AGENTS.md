@@ -23,23 +23,17 @@
 - Ruthlessly iterate on these lessons until mistake rate drops
 - Review lessons at session start for relevant project
 
-### 4. Verification Before Done
-
-- Never mark a task complete without proving it works
-
 ---
 
 ## Core Principles
 
-- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
+- **Simplicity First**: the simplest change that works; touch minimal code.
 
 ---
 
 ## Comments
 
-A comment describes only the symbol it sits on — no vendor names, PR-references, call-sites, foreign internals, or restating the code. Try to delete the need for the comment first. Full rubric:
-
-@comment-rules.md
+A comment describes only the symbol it sits on, pitched at a different altitude than the code (intent or precision, never restating it), and only when the code cannot be made to say it itself. No PR/change references, vendor names, call-site descriptions, or foreign internals. The `comment-audit` skill checks changed code against the full rubric.
 
 ## Agent docs (AGENTS.md / CLAUDE.md)
 

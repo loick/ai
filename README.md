@@ -39,10 +39,22 @@ cp .env.example .env   # fill in your tokens
 
 Re-run `./install.sh` any time to reconcile config; it is idempotent and stays the source of truth for `~/.claude`.
 
+### Install as a plugin (shareable skills only)
+
+The shareable parts — skills, slash commands, and the output style — are also packaged as a Claude Code plugin, so others can install them without cloning:
+
+```sh
+/plugin marketplace add loick/ai
+/plugin install ai-config@loick-ai
+```
+
+This is publicly installable (the repo is public). It intentionally does **not** carry the global agent instructions, subagent catalog, or MCP setup — a plugin can't ship those; `install.sh` remains the full setup.
+
 ### Layout
 
 - `AGENTS.md`: global agent instructions (`CLAUDE.md` is a symlink)
-- `comment-rules.md`, `agent-doc-rules.md`, `RTK.md`: rule files `@`-imported by `AGENTS.md`
+- `agent-doc-rules.md`, `RTK.md`: rule files `@`-imported by `AGENTS.md`
+- `.claude-plugin/`: plugin + marketplace manifests, so the shareable skills/commands/output-style install via `/plugin`
 - `agents.txt`: subagents to pull from the upstream catalog
 - `skills/`: custom skills; `skills.txt`: remote skills to install
 - `commands/`: global slash commands

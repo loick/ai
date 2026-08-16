@@ -1,0 +1,19 @@
+{
+  "name": "loick-ai",
+  "owner": {
+    "name": "Loick Le Digabel"
+  },
+  "metadata": {
+    "description": "Portable AI coding-agent config — shareable skills, slash commands, and output style."
+  },
+  "plugins": [
+    {
+      "name": "ai-config",
+      "source": ".",
+      "description": "Layered code reviewers (XP, Paul, security), multi-lens qa-swarm review, review-triage, comment-audit, daily-standup, and a zero-trust output style.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "tags": ["code-review", "skills", "workflow"]
+    }
+  ]
+}

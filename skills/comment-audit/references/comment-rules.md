@@ -1,6 +1,6 @@
 # Comment rules
 
-Canonical rules for every comment you write or change. Language-agnostic; applies to backend, frontend, mobile, AI, and data code alike.
+Canonical rules for every comment in the codebase — the rubric this skill audits against. Language-agnostic; applies to backend, frontend, mobile, AI, and data code alike.
 
 A comment is a liability, not a free win. A comment that is wrong, stale, or describes things outside the code it sits on is _worse_ than no comment — the reader trusts it, and it rots the moment the world around it moves. By trying to help, a careless comment hurts the outcome.
 
@@ -25,6 +25,15 @@ When a comment is warranted on a function, class, method, or constant, prefer a 
 - **Describe where or how the symbol is used.** Call sites move; describe what _this_ code does, not who calls it or what fires elsewhere.
 - **Name foreign symbols, events, files, or endpoints.** Reference only the thing being annotated.
 - **State what the code does _not_ do.** State only the positive fact.
+
+## Severity
+
+When auditing, classify each violation:
+
+- **substantive** — leaks a vendor or foreign internals, references the change/PR, describes call-sites or other files/services, restates the code at the same altitude, or states what the code does _not_ do. These mislead or rot; they should be deleted or rewritten.
+- **nit** — minor wording, borderline-redundant but harmless. Worth noting, not worth blocking on.
+
+A gate that fires on nits trains people to ignore it. Lead with substantive findings.
 
 ## Worked example
 
