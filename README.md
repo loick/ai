@@ -11,8 +11,8 @@ Two things live here:
 
 > **The spine:** your job is the whole loop, specify, orchestrate, verify. The agent only takes the middle. Both ends stay yours.
 
-- **[Manifesto](./ai-manifesto/MANIFESTO.md)**: 13 principles. Where your effort should go, how to review, how to coordinate, and how to keep judgment where it belongs.
-- **[Playbook](./ai-manifesto/PLAYBOOK.md)**: the tunable dials. Parallelism, layered review and AI-merge gates, the hard floor, PR ownership, tickets, project forecasting, model selection.
+- **[Manifesto](./ai-manifesto/MANIFESTO.md)**: 14 principles. Where your effort should go, how to review, how to coordinate, how to keep data and judgment where they belong.
+- **[Playbook](./ai-manifesto/PLAYBOOK.md)**: the tunable dials. Parallelism, layered review and AI-merge gates, the hard floor, PR ownership, tickets, project forecasting, security & confidentiality, model selection.
 - **[WAT](./ai-manifesto/WAT.md)**: the Workflows / Agents / Tools architecture that makes the manifesto buildable. Probabilistic AI reasons, deterministic code executes.
 
 A mindset, not a rulebook. The principles are stable; the numbers and mechanics change as models and tooling improve. For engineers and non-engineers alike.

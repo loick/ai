@@ -23,6 +23,9 @@ Engineer-facing unless noted.
 - [Tickets](#tickets)
 - [Project forecasting](#project-forecasting-management)
 
+**Security**
+- [Security & confidentiality](#security--confidentiality)
+
 **Running agents in production**
 - [Loop graduation](#loop-graduation-wat)
 - [Agent evals & observability](#agent-evals--observability)
@@ -150,6 +153,19 @@ Enforce it mechanically, not by memory. The dangerous PR is the one whose author
 - **Re-forecast the release date on a cadence** (every X days). A rolling re-estimate is honest; a percentage-complete is not, because tickets vary in size and scope always grows at the end, so a % manufactures false deadlines.
 - Report progress as **milestone state** (defined → in progress → shipped), not as a percentage.
 - For status: a real conversation or a look at done-vs-project beats any dashboard number.
+
+## Security & confidentiality
+
+The agent widens the attack surface: what you send out, what it reads in, and what you let it run. Gate each.
+
+- **Classify the data, then decide the sink.** Know what class a task touches (public / internal / customer-PII / regulated) and which providers and tools are approved for each. Default-deny: a sink not approved for that class doesn't get the data. The everyday leak is mundane — pasting a production database export, a private key, or a customer's records into a general-purpose chat or an unapproved IDE assistant. This is the upstream twin of the egress hard-floor below.
+- **Prefer providers that don't train on your inputs**, and check retention and data-residency terms *before* routing real data through them. A seat/enterprise agreement typically carries these guarantees; ad-hoc third-party gateways typically don't, and routing through one can silently strip them.
+- **Grant agents and loops least privilege.** An agent inherits whatever access you hand it — scope credentials to the task, prefer read-only, time-box them. A graduated, unattended loop is the sharp case: it holds its access around the clock with no human watching, so its blast radius *is* its standing permissions. Give a loop the narrowest scope that still does the job, and review that scope when the job changes.
+- **Keep regulated data inside its compliance perimeter.** When data falls under a regime (PII → GDPR, cardholder → PCI, health → HIPAA and regional equivalents), every provider, tool, and MCP that processes it is a **sub-processor** and must clear the same bar: certification/attestation, a data-processing agreement, an approved hosting region. A partner not certified for that data class doesn't get the data, however convenient the integration. Your compliance perimeter doesn't stop at the agent's edge.
+- **Treat everything an agent reads as untrusted input.** Issues, PR descriptions, web pages, tool outputs, and file contents can carry prompt-injection payloads. Scale the gate to the blast radius: the more an agent can do (write access, shell, money/data paths), the less it may act on unvetted content without a human. Pair broad permissions with narrow, trusted inputs.
+- **Vet skills, MCP servers, and tools like dependencies, not plugins.** They run with your credentials and see your context. Pin sources, review before install, prefer first-party over unofficial gateways, and re-check on update. A remote skill/MCP list *is* a supply chain.
+- **Secrets in one place (env); never in prompts, logs, or generated code.** Scan AI output for hardcoded secrets and the usual vulnerability classes before merge, plausible-looking insecure code is exactly what AI produces most readily (this is why self-review and layered review matter, see above).
+- **Egress stays a hard-floor path** (see [The hard floor](#the-hard-floor-always-a-human)): sensitive data leaving to any third-party sink is human-gated regardless of PR size.
 
 ## Loop graduation (WAT)
 
