@@ -59,7 +59,12 @@ add_mcp "chrome-devtools" '{
 }'
 
 # Device-control MCP for debugging React Native / Expo apps on iOS
-# simulators, Android emulators, and Chromium. Needs the argent CLI on PATH.
+# simulators, Android emulators, and Chromium. The MCP server ships with the
+# argent CLI, so install it globally when it isn't already on PATH.
+if ! command -v argent > /dev/null 2>&1; then
+  echo "  … argent CLI not found — installing @swmansion/argent globally"
+  npm install -g @swmansion/argent@latest > /dev/null 2>&1 || true
+fi
 if command -v argent > /dev/null 2>&1; then
   add_mcp "argent" '{
     "type": "stdio",
@@ -67,7 +72,7 @@ if command -v argent > /dev/null 2>&1; then
     "args": ["mcp"]
   }'
 else
-  echo "  ⚠ argent CLI not found — skipping argent MCP (install: npx @swmansion/argent@latest init)"
+  echo "  ⚠ argent CLI unavailable (npm install failed?) — skipping argent MCP"
 fi
 
 if [ -z "$NOTION_API_TOKEN" ]; then
