@@ -41,14 +41,17 @@ Re-run `./install.sh` any time to reconcile config; it is idempotent and stays t
 
 ### Install as a plugin (shareable skills only)
 
-The shareable parts — skills, slash commands, and the output style — are also packaged as a Claude Code plugin, so others can install them without cloning:
+The shareable parts — skills, slash commands, and the output style — are also packaged as a Claude Code plugin, so others can use them without cloning. **In Claude Code** (these are prompt commands, not shell), run:
 
-```sh
+```text
 /plugin marketplace add loick/ai
 /plugin install ai-config@loick-ai
+/reload-plugins
 ```
 
-This is publicly installable (the repo is public). It intentionally does **not** carry the global agent instructions, subagent catalog, or MCP setup — a plugin can't ship those; `install.sh` remains the full setup.
+The skills load namespaced under `ai-config:` (e.g. `/ai-config:comment-audit`, `/ai-config:xp-reviewer`), and the output style becomes selectable. Publicly installable while the repo is public.
+
+It intentionally does **not** carry the global agent instructions, subagent catalog, or MCP setup — a plugin can't ship those; run `install.sh` for the full setup.
 
 ### Layout
 
