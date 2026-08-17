@@ -53,7 +53,7 @@ Spec quality is the ceiling ([Manifesto](./MANIFESTO.md), principle 1), and the 
 - **Interview me.** Have the agent ask clarifying questions *one at a time*, prioritizing the ones whose answer would change the architecture. Pulls forward the *known unknowns* you'd otherwise hit mid-build.
 - **Prototype the "unknown knowns."** Criteria you'll recognize but can't state upfront: a quick mock or two design directions makes them concrete before an expensive pivot.
 - **Log deviations while building.** Keep a scratch file of where the build left the plan and the conservative call you made, it's raw material for the next spec and the PR context.
-- **Quiz before merge.** After a long agent-driven change, have it quiz you on the behavior and the code paths it touched. If you can't pass, you don't own what you're shipping (principle 4).
+- **Quiz yourself before the next spec, not just before merge.** After a long agent-driven change, have it quiz you on the behavior and the code paths it touched. Verification proves the code works; the quiz proves *you* understand it, and that understanding is what lets you specify the next iteration instead of losing the plot. It doubles as a merge-time ownership check: if you can't pass, you don't own what you're shipping (principle 4).
 
 Reach for the **`grill-me`** skill (Matt Pocock) at spec time rather than prompting from scratch: a relentless interview that sharpens a plan or design by interrogating it before you build.
 
