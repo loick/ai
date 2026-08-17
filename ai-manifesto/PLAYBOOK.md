@@ -9,6 +9,7 @@ Engineer-facing unless noted.
 ## Contents
 
 - [Parallelism](#parallelism)
+- [Surfacing unknowns](#surfacing-unknowns-spec-phase)
 
 **Review & PR flow**
 - [Verification & review](#verification--review)
@@ -31,6 +32,7 @@ Engineer-facing unless noted.
 - [Agent evals & observability](#agent-evals--observability)
 - [Model selection](#model-selection)
 - [Shared setup](#shared-setup)
+- [Context engineering](#context-engineering)
 
 - [Sources & further reading](#sources--further-reading)
 
@@ -42,6 +44,18 @@ Engineer-facing unless noted.
 - Aim for **≥3 background tasks in flight** (investigations, small fixes, prep for future work). This is a rule of thumb (popularized as "3–5 parallel worktrees"), not a quota.
 - The ceiling is **your review capacity**, not the tooling. Community rules of thumb put it around ~4–8 concurrent, but treat that as a rough calibration, not a studied limit: when you can't verify the outputs, stop launching more.
 - Good background candidates: cleanup, spikes, research, mechanical refactors, small independent bug fixes. Bad candidates: anything needing heavy specification or deep verification, which belong in the foreground.
+
+## Surfacing unknowns (spec phase)
+
+Spec quality is the ceiling ([Manifesto](./MANIFESTO.md), principle 1), and the hard part isn't writing the spec, it's finding what you didn't know to put in it. What you're getting good at is discovering your unknowns efficiently, not producing a flawless spec cold. Cheap moves before you build:
+
+- **Blind-spot pass.** Entering unfamiliar territory, ask the agent to surface your *unknown unknowns* first, and tell it your expertise level so it calibrates. ("Adding an auth provider but I don't know this codebase's auth modules, do a blind-spot pass on my relevant unknowns.")
+- **Interview me.** Have the agent ask clarifying questions *one at a time*, prioritizing the ones whose answer would change the architecture. Pulls forward the *known unknowns* you'd otherwise hit mid-build.
+- **Prototype the "unknown knowns."** Criteria you'll recognize but can't state upfront: a quick mock or two design directions makes them concrete before an expensive pivot.
+- **Log deviations while building.** Keep a scratch file of where the build left the plan and the conservative call you made, it's raw material for the next spec and the PR context.
+- **Quiz before merge.** After a long agent-driven change, have it quiz you on the behavior and the code paths it touched. If you can't pass, you don't own what you're shipping (principle 4).
+
+Reach for the **`grill-me`** skill (Matt Pocock) at spec time rather than prompting from scratch: a relentless interview that sharpens a plan or design by interrogating it before you build.
 
 ## Verification & review
 
@@ -212,6 +226,16 @@ Graduation rule (the *Graduate your loops* principle): no evaluator that catches
 - **Writing a skill (match rigidity to the task):** for judgment tasks, give goals, constraints, and context the agent can't discover, *not* step-by-step procedures; over-specifying strips the intelligence you're paying for. For work that must be reproducible (releases, migrations, benchmarks), do the opposite: an executable procedure with hard gates, fixed contracts, and preflight checks, so every run is identical. Either way, tell agents to check for an existing implementation before writing new; their default is to write fresh, which inflates duplication.
 - **Fight skill rot:** put durable structure in the skill, but point to the live source for volatile content (docs, schemas, API specs) instead of embedding it; version skills, give each an owner, keep them synced in CI. A stale skill is worse than none.
 
+## Context engineering
+
+Context is a budget, not a free good. A frontier model reliably follows ~150–200 instructions and the harness already spends ~50; your always-on context (agent docs + global rules) should stay under **~5% of the window**. Past a point, more context *lowers* success and raises cost, this is **context rot**: accuracy degrades as the window fills, a gradient not a cliff. Give an agent the minimum relevant context and let it pull the rest just-in-time.
+
+- **Load on demand, don't front-load.** Prefer **resolvers**, retrieval tools, MCP resources, `glob`/`grep`, deferred tool-loading, progressive-disclosure skills, that fetch the relevant slice when the task needs it, over stuffing it into the system prompt or `AGENTS.md`. Keep lightweight identifiers (file paths, stored queries, links) in context; resolve the payload at runtime. This is the runtime twin of the "point to the live source" rule under [Shared setup](#shared-setup), and of spec quality being the ceiling in the [Manifesto](./MANIFESTO.md): under-context and the agent guesses, over-context and it degrades.
+- **Task-specific context → a skill, not the agent doc.** If a section applies to only one kind of task (migrations, deploys, review), it belongs in a *triggered* skill, loaded when relevant, not in the always-on `AGENTS.md`. The agent doc holds only what's universally applicable to the repo.
+- **Keep agent docs lean and human-authored.** `AGENTS.md` / `CLAUDE.md`: tech stack, structure, non-obvious tooling, genuine gotchas. Not directory trees, not restated style rules (a linter does that job deterministically and cheaper), not task instructions. Auto-generated docs measurably *hurt* (lower success, higher cost); cap it small (<~300 lines; many good ones are ~60). Assume it **may be ignored** when it isn't clearly relevant, so load-bearing constraints belong in deterministic gates or triggered skills, not prose you hope gets followed.
+- **Name tools precisely.** A *mentioned* tool gets reached for far more (~160×) than an equivalent one the agent must discover; expressive, unambiguous tool names and parameters beat usage examples baked into the prompt. Avoid bloated, overlapping tool sets with ambiguous decision points.
+- **Rules → judgment, scaled to the model.** On a frontier model, cut hand-written rules it now handles by default and keep only the constraints it can't infer (Anthropic trimmed ~80% of Claude Code's system prompt with no measured loss). Cheaper/smaller models decay faster as instructions pile up, so they need the explicit version. Match the instruction weight to the model, same as [model selection](#model-selection).
+
 ## Sources & further reading
 
 The data-backed claims above (the verification gap, quality drift, the delegation gap) draw on, among others. Figures are as reported by each source:
@@ -222,4 +246,15 @@ The data-backed claims above (the verification gap, quality drift, the delegatio
 - Michaela Greiler, [*Code Review Surrender and Exploitation*](https://www.michaelagreiler.com/codereview-surrender-exploitation/): the two ways review breaks under AI volume.
 - Anthropic, [agentic coding trends](https://pathmode.io/blog/orchestration-era-needs-intent) (the ~60% use / ~20% full-delegation gap) and Frontier Red Team [multi-agent conformity findings](https://techcrunch.com/2026/08/13/anthropic-set-ai-agents-loose-on-the-same-task-they-started-a-turf-war/).
 - LMSYS, [*Agent-Assisted SGLang Development*](https://www.lmsys.org/blog/2026-07-02-agent-assisted-sglang-development): skills as executable procedures with hard gates for reproducible work.
-- PostHog, [*Product for Engineers*](https://newsletter.posthog.com/): the delegation matrix, agent evals, and context/skill design.
+- PostHog *Product for Engineers* (Jina Yoon), [*How much can you delegate to agents?*](https://newsletter.posthog.com/p/agent-autonomy): the delegation matrix (verifiability × reversibility).
+- PostHog *Product for Engineers* (Ian Vanagas), [*What we wish we knew about building AI agents*](https://posthog.com/newsletter/building-ai-agents): agent evals (tracing, LLM-as-judge, deterministic checks) and the "traces hour" review ritual.
+- PostHog *Product for Engineers* (Ian Vanagas), [*What nobody tells you about writing agent skills*](https://newsletter.posthog.com/p/what-nobody-tells-you-about-writing): skill/context design — progressive disclosure, what's worth turning into a skill, and not over-specifying (which "strips the intelligence you are paying for").
+- Anthropic, [*A field guide to Claude Fable: finding your unknowns*](https://claude.com/blog/a-field-guide-to-claude-fable-finding-your-unknowns): the known/unknown quadrants and the spec-phase techniques (blind-spot pass, interview, prototype, quiz) behind [surfacing unknowns](#surfacing-unknowns-spec-phase).
+
+On [context engineering](#context-engineering) specifically:
+
+- Anthropic, [*Effective context engineering for AI agents*](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): the primary source for just-in-time retrieval / resolvers, context-as-budget, context rot, compaction, note-taking, and sub-agent context isolation.
+- Anthropic, [*The new rules of context engineering for Claude 5-generation models*](https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models): rules→judgment, progressive disclosure, single source of truth, and the ~80% system-prompt cut with no measured loss.
+- HumanLayer, [*Writing a good CLAUDE.md*](https://www.humanlayer.dev/blog/writing-a-good-claude-md): the <5%-of-window budget, progressive-disclosure trees (`agent_docs/`), "never send an LLM to do a linter's job," task-specific content → `SKILL.md`, and the caution that agent docs may be ignored when not clearly relevant.
+- Philip Schmid, [*Writing a good AGENTS.md*](https://www.philschmid.de/writing-good-agents): auto-generated docs score worse and cost more, mentioned tools used ~160× more than unmentioned, and the ~150–200 instruction budget.
+- Anthropic, [*Best practices for Claude Code*](https://code.claude.com/docs/en/best-practices): the <200-line target, `CLAUDE.local.md` for personal overrides, and updating agent docs from code-review findings.
