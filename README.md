@@ -58,7 +58,7 @@ It intentionally does **not** carry the global agent instructions, subagent cata
 ### Layout
 
 - `AGENTS.md`: global agent instructions (`CLAUDE.md` is a symlink)
-- `agent-doc-rules.md`, `RTK.md`: rule files `@`-imported by `AGENTS.md`
+- `RTK.md`: rule file `@`-imported by `AGENTS.md`
 - `.claude-plugin/`: plugin + marketplace manifests, so the shareable skills/commands/output-style install via `/plugin`
 - `agents.txt`: subagents to pull from the upstream catalog
 - `skills/`: custom skills; `skills.txt`: remote skills to install

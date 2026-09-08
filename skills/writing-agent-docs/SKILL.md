@@ -1,6 +1,14 @@
-# Agent doc rules
+---
+name: writing-agent-docs
+description: >-
+  Rubric for writing or reviewing per-package AGENTS.md / CLAUDE.md docs. Use whenever creating, editing, or reviewing an AGENTS.md or CLAUDE.md — including as a side-effect of other work. For general agent-document mechanics (skills, context pointers, pruning), use the writing-for-agents skill instead.
+---
+
+# Writing per-package agent docs
 
 Canonical rules for writing per-package agent docs (`AGENTS.md`, auto-loaded by Claude Code via path-walking; `CLAUDE.md` is typically a symlink to it). The goal is a doc that **does not rot**. Code moves, gets renamed, and gets refactored constantly — a doc pinned to today's file names and function signatures is wrong within weeks and actively misleads agents. Architecture changes slowly. Write to the slow layer.
+
+For general writing mechanics that apply to any agent-consumed document (context pointers, information hierarchy, leading words, pruning), read the `writing-for-agents` skill; this skill is the genre spec for one document type.
 
 ## The one test
 
@@ -41,6 +49,12 @@ Naming a **pattern, convention, or architectural concept** is fine and encourage
 
 **No directory maps.** Don't list a package's folders — an agent discovers structure by scanning far more reliably than a hand-kept map stays current. The one exception is the **repo root**, where a brief top-level map (what `apps/`, `libs/`, `packages/`, `tools/` mean and the layering inside them) earns its place because it encodes an organizing _convention_, not just a list of folders.
 
+**The resolution table (repo root only).** In a multi-package repo, the root doc carries a complete index: one row per package agent doc — its path plus a one-line hook of what the package owns. This is the sanctioned exception to the no-paths rule because the paths point at the *docs themselves* and parity is mechanically checkable. Rules for the table:
+
+- It is **orientation, not a loader**: rows are plain pointers, never `@imports` — path-walking already loads the nearest doc; the table only sharpens pathfinding across the tree.
+- **Parity is absolute**: adding, moving, or deleting an `AGENTS.md` anywhere updates its row in the same change. If the repo has a validation script enforcing this, run it; if the table grows past a handful of rows and no validator exists, propose one.
+- The hook is one line of perimeter ("owns billing invariants"), not inventory.
+
 ### 3. Describe the feature, not what implements it
 
 Talk about the **capability** the package provides, not the third-party tool or the specific in-house construct behind it. Say "authentication", not "Clerk"; "analytics", not "PostHog"; "the generated API client", not the codegen tool's name. The vendor and the implementation are swappable details — the product capability is the stable thing, and it's what the package actually owns. Name a vendor **only** when the rule is specifically about that vendor being a swappable detail confined behind the package's contract (e.g. "raw vendor error messages must not leak to users") — and even then, lead with the capability.
@@ -61,9 +75,17 @@ A short "what this does NOT own" section prevents the most common mistake: putti
 
 Do write down a **non-standard workflow** — a codegen step that must be re-run and its artifact committed, an i18n catalog that must be re-extracted and committed, a "change the source of truth and generate, never hand-write" rule. These aren't visible in `package.json` and getting them wrong breaks the build; phrase them as a Do/Don't rather than a transcribed command. Don't add a generic Commands/Testing section for standard scripts (they're in `package.json`), and don't paste code — describe the pattern in words, with at most a tiny convention-level snippet when prose genuinely can't carry it.
 
-### 8. Keep it short
+When a workflow needs more than ~5 lines, don't inflate the doc — disclose it: if it's universally relevant to the package, move it to a separate doc behind a one-line pointer; if it only applies to one kind of task (migrations, releases, review), it belongs in a *triggered skill*, not the always-loaded agent doc.
 
-Brevity is a feature: a short doc is read and stays current; a long one rots and gets skipped. If a section isn't load-bearing, cut it.
+### 8. Keep it short, order by criticality
+
+Brevity is a feature: a short doc is read and stays current; a long one rots and gets skipped. If a section isn't load-bearing, cut it. The checkable bound: flag any doc past **~150 lines** for pruning or disclosure (measured across 2,500+ repos, length beyond that raises inference cost ~20% with no success gain); the best docs run closer to ~60.
+
+Earlier lines carry more weight in practice, so order sections by criticality — boundaries and traps before conventions. But treat ordering as a cheap tiebreaker, not a safety mechanism: a truly load-bearing constraint belongs in a deterministic gate or a triggered skill, not in prose you hope gets read first.
+
+### 9. Honor repo-local additions
+
+A repo may carry its own agent-doc guidelines (e.g. under `docs/`) with rules specific to that repo — an index that must stay in parity with the docs, a validation script, a canonical worked example. Those add to this rubric; they never replace it. Check for one before writing.
 
 ## Shape to follow
 
@@ -96,3 +118,5 @@ A good worked example is a package doc with a tight perimeter statement, archite
 ## When to update
 
 Update a package's doc when its **responsibility, boundaries, or load-bearing rules** change — a new architectural pattern, a moved boundary, a new class of trap. Do **not** update it for renames, new functions, or new endpoints: if the doc was written correctly, those don't affect it. If a routine code change forces a doc edit, the doc was too specific — fix the doc to be about the rule, not the symbol.
+
+Add rules **reactively, not preemptively**: a new rule earns its place when an agent actually got it wrong, not because it might. And prune in the same spirit — drop rules current models handle by default; every line kept is context spent on every session.

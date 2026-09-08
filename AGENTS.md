@@ -8,9 +8,7 @@
 
 ## Agent docs (AGENTS.md / CLAUDE.md)
 
-Per-package agent docs describe the package's shape and boundaries, never its file names or symbols — write to the slow layer so a rename can't falsify them. Full rubric:
-
-@agent-doc-rules.md
+Writing, editing, or reviewing an AGENTS.md / CLAUDE.md — even as a side-effect of other work — use the `writing-agent-docs` skill first. Its core rule: describe the package's shape and boundaries, never its file names or symbols.
 
 ### MCPs
 When I want to connect to my personal MCP for:
