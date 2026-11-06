@@ -43,6 +43,10 @@ Re-run `./install.sh` any time to reconcile config; it is idempotent and stays t
 
 After downloading remote skills, the installer applies `patches/grilling.patch` to ask one question at a time. Upstream remains the source; if the patch no longer applies, installation fails so the customization can be reviewed.
 
+### Interactive PR feedback
+
+Use `/pr-feedback <GitHub PR URL>` to watch a PR until it merges and decide on feedback one item at a time: accept, correct and resolve; or reject with a previewed reply and resolve. Equivalent decisions are reused within that PR. Replies carry no model attribution. Progress lives outside the repo under `~/.local/state/ai/pr-feedback/`; a live agent session is required to keep listening.
+
 ### Install as a plugin (shareable skills only)
 
 The shareable parts — skills, slash commands, and the output style — are also packaged as a Claude Code plugin, so others can use them without cloning. **In Claude Code** (these are prompt commands, not shell), run:

@@ -21,3 +21,4 @@ https://github.com/mattpocock/skills wizard
 https://github.com/mattpocock/skills writing-beats
 https://github.com/mattpocock/skills writing-for-agents
 https://github.com/mattpocock/skills writing-fragments
+https://github.com/t3dotgg/tstack council
