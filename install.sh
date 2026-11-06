@@ -152,10 +152,13 @@ if command -v skills > /dev/null 2>&1 || npm install -g skills > /dev/null 2>&1;
     # -g --copy installs real files at the user level. Without them the CLI writes
     # repo-local symlinks that Claude also loads, registering each skill twice.
     # shellcheck disable=SC2086
-    skills add "$repo" $skill_flags -g --copy -a claude-code codex cursor -y < /dev/null
-  done
+    skills add "$repo" $skill_flags -g --copy -a claude-code codex cursor -y < /dev/null || exit 1
+  done || exit 1
   set +f
-  echo "✔ Remote skills installed"
+  for destination in "$HOME/.agents/skills" "$HOME/.claude/skills"; do
+    patch -t -N -F 0 -p1 -d "$destination" < "$SCRIPT_DIR/patches/grilling.patch" || exit 1
+  done
+  echo "✔ Remote skills installed and grilling patch applied"
 else
   echo "⚠ Could not install skills CLI — skipping remote skills"
 fi
