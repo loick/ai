@@ -19,7 +19,7 @@ A mindset, not a rulebook. The principles are stable; the numbers and mechanics 
 
 ## The setup
 
-Portable AI coding-agent config, shared across machines and tools. `AGENTS.md` is the single source of truth for agent instructions; `CLAUDE.md` is a symlink to it, so Claude Code, Codex, and Cursor all read the same rules. `install.sh` wires everything into `~/.claude`: global agent instructions, subagents, custom and remote skills, slash commands, output styles, default settings, and MCP servers.
+Portable AI coding-agent config, shared across machines and tools. `AGENTS.md` is the single source of truth for agent instructions; `CLAUDE.md` is a symlink to it, so Claude Code, Codex, and Cursor all read the same rules. `install.sh` links custom skills into `~/.claude/skills` for Claude Code and `~/.agents/skills` for Codex. Remote skills are installed for Claude Code, Codex, and Cursor. Global instructions, subagents, slash commands, output styles, settings, and MCP setup are configured for Claude Code.
 
 ### Prerequisites
 

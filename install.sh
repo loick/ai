@@ -77,15 +77,17 @@ fi
 SKILLS_SRC="$SCRIPT_DIR/skills"
 SKILLS_DST="$HOME/.claude/skills"
 
-mkdir -p "$SKILLS_DST"
+mkdir -p "$SKILLS_DST" "$HOME/.agents/skills"
 
 for skill in "$SKILLS_SRC"/*; do
   name="$(basename "$skill")"
   [ "$name" = ".gitkeep" ] && continue
-  rm -rf "$SKILLS_DST/$name"
-  ln -Fs "$skill" "$SKILLS_DST/$name"
+  for destination in "$SKILLS_DST" "$HOME/.agents/skills"; do
+    rm -rf "$destination/$name"
+    ln -Fs "$skill" "$destination/$name"
+  done
 done
-echo "✔ Custom skills symlinked"
+echo "✔ Custom skills symlinked for Claude Code and Codex"
 
 # Install CLI symlinks for any skill that ships a <name>.sh script
 mkdir -p "$HOME/bin"
