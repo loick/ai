@@ -40,7 +40,7 @@ git diff ${ARG:-HEAD} -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.py' '*.sql'
 
 The rules themselves are language-agnostic; this default glob just scopes to the repo's primary source extensions for a fast, low-noise pass. For other languages, widen the glob or use path mode.
 
-Keep only **added (`+`) or modified comment lines** — `//`, `/* */`, `/** */`, `#`. Ignore pre-existing comments the change did not touch, code lines, deletions, and whitespace.
+Keep only **added (`+`) or modified comment lines** — `//`, `/* */`, `/** */`, `#`, and `--` in SQL files. Ignore pre-existing comments the change did not touch, code lines, deletions, and whitespace.
 
 **Path mode:** read the files under the given path and collect every comment.
 
