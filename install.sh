@@ -178,6 +178,8 @@ if [ -f "$PLUGINS_LIST" ]; then
   grep -v '^\s*#' "$PLUGINS_LIST" | grep -v '^\s*$' | awk '{print $2}' | while read -r plugin; do
     claude plugin install "$plugin" 2>/dev/null || true
   done
+  # Hide ponytail's cost band above the prompt; `/ponytail band on` brings it back.
+  printf off > ~/.claude/.ponytail-band
   echo "✔ Plugins installed"
 fi
 
