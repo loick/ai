@@ -1,9 +1,11 @@
 ---
 name: ci-optimization
-description: Investigate slow or costly CI using real workflow runs, benchmark a candidate change, and decide whether it merits a PR.
+description: Investigate and benchmark slow or costly CI, or decide what to test when writing or reviewing a CI workflow or script.
 ---
 
 # Optimize CI
+
+For a workflow test review, go directly to [Choose what to test](#choose-what-to-test). For performance work, start with real runs.
 
 ## Start with real runs
 
@@ -25,6 +27,14 @@ When failures or retries drive the wait, measure first-attempt failure rate, pas
 - **Fetch what each job consumes.** Count repeated downloads of the same revision across the job matrix. A diff-only job can use the provider's exact base-to-head change list. Use a checkout with the paths and history the job actually reads, and fall back to the complete diff when the API result is incomplete. [Anthropic on avoiding checkouts](https://www.anthropic.com/research/redesigning-source-control) · [OpenAI on concurrent Git fetches](https://openai.com/index/scaling-git-at-openai/)
 - **Surface failures sooner.** If red feedback is the problem, benchmark reordering checks against time to the first actionable failure while keeping the required test inventory intact. Check time to green too. [Shopify's test prioritization experiment](https://shopify.engineering/test-budget-time-constrained-ci-feedback)
 - **Size and balance the work that remains.** Measure imports, test execution, and resource saturation before changing the runner, worker count, or shards. When shards finish unevenly, balance them using per-file timings from full runs on the default branch.
+
+## Choose what to test
+
+Name the failure a developer or downstream job would observe. If the normal PR run exercises that path and reliably exposes the failure, that run is enough. Add a focused test for a decision CI could silently get wrong.
+
+- Exercise the entry point CI uses. Feed changed paths to the real selector and check which jobs it selects, or inspect the artifact produced by a release build. To check that warnings block a merge, give the repository's typecheck command a warning-only fixture and assert that it fails. Adding the warning flag in the test itself would hide its removal from CI.
+- Read the workflow configuration directly when a separate requirement defines the expected value. For example, compare the oldest runtime in the matrix with the minimum the package promises to support. [Shopify's CI matrix test](https://github.com/Shopify/job-iteration/blob/54661e3b19e6da34f46cefa2dcde06a5cf81d2f0/test/ci_matrix_test.rb#L7-L47)
+- Drop assertions that only repeat a command line or recheck a pinned tool's built-in behavior. A test of the typecheck verdict should still pass if someone reorders equivalent flags or changes worker count.
 
 ## Verify changes to test selection
 
